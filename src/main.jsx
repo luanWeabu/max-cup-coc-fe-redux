@@ -1,10 +1,79 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import ErrorPage from "./error-page";
+import ClientCustomer from "./customer/Customer";
+import Dashboard from "./admin/Dashboard";
+import Login from "./admin/Login";
+import Admin from "./admin/admin";
+import AuthScreen from "./admin/AuthScreen";
+import Product from "./admin/product/Product";
+import Users from "./admin/users/Users";
+import { Provider } from "react-redux";
+import store from "./admin/redux/store";
+import Order from "./admin/order/Order";
+import Category from "./admin/category/CategoryForm";
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+const router = createBrowserRouter([
+  {
+    path: "/", // đường dẫn đầu tiên khi vào website
+    element: <ClientCustomer />, // Tên Component
+    errorElement: <ErrorPage />, // Component Error xảy ra khi gặp vấn đề của trang web
+  },
+  {
+    path: "admin",
+    element: <Admin />,
+    // children tạo ra một cây đường dẫn cho web của bạn như ở đây có 2 children là login và auth
+    // đường dẫn của nó sẽ là admin/login or admin/login
+    children: [
+      {
+        path: "login",
+        element: <Login />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "auth",
+        element: <AuthScreen />,
+        errorElement: <ErrorPage />,
+        // tương tự như trên đường dẫn sẽ là auth/dashboard auth/user auth/product
+        children: [
+          {
+            path: "dashboard",
+            element: <Dashboard />,
+          },
+          {
+            path: "users",
+            element: <Users />,
+          },
+          {
+            path: "product",
+            element: <Product />,
+          },
+          {
+            path: "order",
+            element: <Order />,
+          },
+          {
+            path: "variant",
+            element: <Product />,
+          },
+          {
+            path: "category",
+            element: <Category />,
+          },
+        ],
+      },
+    ],
+  },
+]);
+
+ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
+    <Provider store={store}>
+      <RouterProvider router={router}>
+        <App />
+      </RouterProvider>
+    </Provider>
+  </React.StrictMode>
+);
